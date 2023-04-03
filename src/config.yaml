@@ -1,0 +1,31 @@
+svm_params:
+  abalone:
+    C: 100
+    gamma: 1
+  diabete:
+    C: 10
+    gamma: 0.1
+  haberman:
+    C: 10
+    gamma: 100
+  ionosphere:
+    C: 10
+    gamma: 0.1
+  satimage:
+    C: 10
+    gamma: 1
+  vehicle:
+    C: 10
+    gamma: 1
+  vowel:
+    C: 10
+    gamma: 1
+  fraud:
+    C: 1000
+    gamma: 0.00001
+  aloi:
+    C: 10
+    gamma: 100
+  pulsar:
+    C: 10
+    gamma: 0.0001
