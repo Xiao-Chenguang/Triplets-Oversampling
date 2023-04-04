@@ -1,4 +1,4 @@
-from src.train_svm import run
+from src.cl_train_svm import run
 from itertools import product
 
 
@@ -7,7 +7,7 @@ datasets = ['vehicle', 'diabete', 'vowel', 'ionosphere',
             'abalone', 'satimage', 'haberman', 'aloi', 'pulsar']
 irs = [1, 2, 4, 8]
 samplings = ['nonsampling', 'oversampling',
-             'adasyn', 'smote', 'blsmote', 'triplets_m']
+             'adasyn', 'smote', 'blsmote', 'triplets']
 seeds = range(30)
 
 for params in product(datasets, irs, samplings, seeds):
