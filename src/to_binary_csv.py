@@ -9,7 +9,6 @@ root = 'datasets/'
 # - save without index
 
 
-
 def process_vehicle():
     print('==================== vehicle ====================')
     path_vehicle = root + 'raw/vehicle.arff'
