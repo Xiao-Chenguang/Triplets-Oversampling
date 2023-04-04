@@ -6,16 +6,16 @@ from imblearn.over_sampling import RandomOverSampler, SMOTE, ADASYN, BorderlineS
 
 
 D_PATH = {'root': 'datasets/',
-          'vehicle': '0_dataset_54_vehicle_van_vs_other.csv',
-          'diabete': '1_Diabetes_no_header.csv',
-          'vowel': '2_vowel_hid_vs_other.csv',
-          'ionosphere': '3_ionosphere_no_header.csv',
-          'abalone': '4_Abalone_no_header.csv',
-          'satimage': '5_dataset_186_satimage_4_vs_other.csv',
-          'haberman': '6_dataset_43_haberman.csv',
-          'fraud': '7_creditcard.csv',
-          'aloi': '8_aloi.csv',
-          'pulsar': '9_pulsar.csv'
+          'vehicle': 'vehicle.csv',
+          'diabete': 'diabete.csv',
+          'vowel': 'vowel.csv',
+          'ionosphere': 'ionosphere.csv',
+          'abalone': 'abalone.csv',
+          'satimage': 'satimage.csv',
+          'haberman': 'haberman.csv',
+          'fraud': 'fraud.csv',
+          'aloi': 'aloi.csv',
+          'pulsar': 'pulsar.csv',
           }
 
 

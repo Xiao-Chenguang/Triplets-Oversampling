@@ -2,7 +2,7 @@ import os
 import yaml
 import numpy as np
 from sklearn.svm import SVC
-from .data import load_data, load_vision_data, resampling, test_split
+from .cl_data import load_data, load_vision_data, resampling, test_split
 from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score, roc_auc_score, average_precision_score
 
 
