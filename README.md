@@ -10,13 +10,20 @@ To reprocude the results of the paper, you need to follow the procedure below:
 You can reproduce the results with provided scripts.
 
 Prepare the virtual environment and packages with conda:
-*source prepare_venv.sh*
+```bash
+source ./prepare_venv.sh
+```
 
-Run the centralized learning experiment:
-*source ./run_cl.sh*
 
-Run the federated learning experiment:
-*source ./run_fl.sh*
+Run the **centralized learning** experiment:
+```bash
+source ./run_cl.sh
+```
+
+Run the **federated learning** experiment:
+```bash
+source ./run_fl.sh
+```
 
 
 ## Python environment and dependencies:
