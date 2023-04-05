@@ -1,5 +1,7 @@
-from scipy.io import arff
+import os
 import pandas as pd
+from scipy.io import arff
+
 root = 'datasets/'
 
 # **Tasks**:
@@ -152,12 +154,42 @@ def process_pulsar():
 
 
 def convert_to_csv():
-    process_vehicle()
-    process_diabete()
-    process_vowel()
-    process_ionosphere()
-    process_abalone()
-    process_staimage()
-    process_haberman()
-    process_aloi()
-    process_pulsar()
+    if os.path.exists(root + 'vehicle.csv'):
+        print('vehicle.csv already exists')
+    else :
+        process_vehicle()
+    if os.path.exists(root + 'diabete.csv'):
+        print('diabete.csv already exists')
+    else :
+        process_diabete()
+    if os.path.exists(root + 'vowel.csv'):
+        print('vowel.csv already exists')
+    else :
+        process_vowel()
+    if os.path.exists(root + 'ionosphere.csv'):
+        print('ionosphere.csv already exists')
+    else :
+        process_ionosphere()
+    if os.path.exists(root + 'abalone.csv'):
+        print('abalone.csv already exists')
+    else :
+        process_abalone()
+    if os.path.exists(root + 'satimage.csv'):
+        print('satimage.csv already exists')
+    else :
+        process_staimage()
+    if os.path.exists(root + 'haberman.csv'):
+        print('haberman.csv already exists')
+    else :
+        process_haberman()
+    if os.path.exists(root + 'aloi.csv'):
+        print('aloi.csv already exists')
+    else :
+        process_aloi()
+    if os.path.exists(root + 'pulsar.csv'):
+        print('pulsar.csv already exists')
+    else :
+        process_pulsar()
+
+if __name__ == '__main__':
+    convert_to_csv()
