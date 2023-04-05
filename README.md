@@ -3,8 +3,8 @@ Project for paper "Triplets Oversampling for Federated Datasets" submitted to EC
 
 To reprocude the results of the paper, you need to follow the procedure below:
 1. Clone or copy the repository to your local machine
-2. Open a terminal and go to the folder "Triplet_Oversampling"
-3. Follow •Quick start• to generate the results of the paper simply.
+2. Open a terminal and go to the folder "Triplets_Oversampling_for_Federated_Datasets"
+3. Follow [Quick start](#quick-start) to generate the results of the paper simply.
 
 ## Quick start
 You can reproduce the results with provided scripts.
@@ -27,6 +27,6 @@ source ./run_fl.sh
 
 
 ## Python environment and dependencies:
-- Conda installed
+- [Conda](https://docs.conda.io/en/latest/miniconda.html) installed
 - Python 3.9
-- Required package is listed in the file "requirements.txt"
+- Required package is listed in the file "[requirements.txt](./requirements.txt)"
