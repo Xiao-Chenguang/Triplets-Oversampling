@@ -10,3 +10,16 @@ To reprocude the results of the paper, you need to follow the procedure below:
 Python environment and dependencies:
 - Python 3.9.7
 - Required package is listed in the file "requirements.txt"
+
+It is encouraged to use a virtual environment to run the scripts.
+For example, with conda:
+*conda create -n trip python=3.9*
+
+To activate the environment:
+*conda activate trip*
+
+To install the required packages:
+*pip install -r requirements.txt*
+
+And then you can run the scripts:
+*./run_svm.sh*
