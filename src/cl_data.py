@@ -50,7 +50,7 @@ def load_vision_data(ds_name):
     '''
     ds_name: str, name of dataset
     '''
-    train_ds = D_PATH_VISION[ds_name](D_PATH_VISION['root'], train=True)
+    train_ds = D_PATH_VISION[ds_name](D_PATH_VISION['root'], train=True, download=True)
     test_ds = D_PATH_VISION[ds_name](D_PATH_VISION['root'], train=False)
     x_train, y_train = train_ds.data, train_ds.targets
     x_test, y_test = test_ds.data, test_ds.targets
