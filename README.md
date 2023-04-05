@@ -22,4 +22,4 @@ To install the required packages:
 *pip install -r requirements.txt*
 
 And then you can run the scripts:
-*./run_svm.sh*
+*./run_cl.sh*
