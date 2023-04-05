@@ -6,6 +6,18 @@ To reprocude the results of the paper, you need to follow the procedure below:
 2. Open a terminal and go to the folder "Triplet_Oversampling"
 3. run the scripts "run.sh" and "run_oversampling.sh" to generate the results of the paper.
 
+## Quick start
+You can reproduce the results with provided scripts.
+
+Prepare the virtual environment and packages with conda:
+*source prepare_venv.sh*
+
+Run the centralized learning experiment:
+*source ./run_cl.sh*
+
+Run the federated learning experiment:
+*source ./run_fl.sh*
+
 
 Python environment and dependencies:
 - Python 3.9.7
