@@ -42,6 +42,7 @@ def run(dsname, sampling, seed, device='cpu', test_size=0.5, ir=1, outexten='', 
     model = SVC(kernel='rbf', **config['svm_params'][dsname])
 
     # create log file
+    if not os.path.exists('results'): os.mkdir('results')
     fname = f"results/svm_results{'' if outexten == '' else '_' + outexten}.csv"
     str_keys, str_values = '', ''
     for k, v in kwargs.items():
