@@ -30,7 +30,7 @@ def run_nn(dataset, os="nonsampling", ir=1, seed=0, task_name=''):
     args.local_lr = 0.001
     args.local_momentum = 0.9
 
-    args.device = "cuda"
+    args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
     # ================== prepare data ==================
