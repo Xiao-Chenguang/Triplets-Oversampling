@@ -17,4 +17,4 @@ python src/cl_to_binary_csv.py
 
 # run the cnetralized learning
 echo "Running the centralized learning"
-python run_svm.py
+python run_cl_svm.py

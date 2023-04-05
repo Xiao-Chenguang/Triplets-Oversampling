@@ -9,4 +9,4 @@ conda activate trip
 
 # run the cnetralized learning
 echo "Running the federated learning"
-python run_fl.py
+python run_fl_nn.py
