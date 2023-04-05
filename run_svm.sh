@@ -4,6 +4,9 @@
 echo "Changing to the directory of this script"
 cd $(dirname $0)
 
+# activate the environment
+conda activate trip
+
 # download the data
 echo "Downloading the data"
 python src/cl_download_data.py
