@@ -35,4 +35,4 @@ source ./run_fl.sh
 The source code for the synthesis quality comparison in the paper is also published.
 You run the [jupyter notebook](./synthesis_quality.ipynb) to get the comporation figures yourself.
 
-You may also customize the dataset you prefer to check the synthesis quality of list algorithms.
+You may also customize the dataset you prefer to check the synthesis quality of selected sampling algorithms.
