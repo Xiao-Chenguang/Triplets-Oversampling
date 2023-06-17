@@ -1,13 +1,11 @@
 # import packages
 import torch
-import numpy as np
 from itertools import product
 from src.fl_fedAvg import FedAvg
 from src.fl_alexNet import AlexNet
 from src.fl_config import get_parser
 from src.fl_data import get_fed_dataset
-from src.cl_data import load_vision_data, resampling
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader
 
 
 def run_nn(dataset, os="nonsampling", ir=1, seed=0, task_name=''):
