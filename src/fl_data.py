@@ -14,8 +14,8 @@ class ImbDataset(Dataset):
         min_id = np.where(np.array(dataset.targets) == cmin)[0]
         min_id = np.random.choice(min_id, int(len(min_id) / ir), replace=False)
         maj_id = np.where(np.array(dataset.targets) != cmin)[0]
-        # sample the data
-        self.id = min_id + maj_id
+        # set self.id equal the concatenation of min_id and maj_id
+        self.id = np.concatenate((min_id, maj_id))
 
     def __getitem__(self, index):
         return self.dataset[self.id[index]]
