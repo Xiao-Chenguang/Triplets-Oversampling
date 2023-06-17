@@ -76,7 +76,7 @@ def get_fed_dataset(args, channel, dim):
         n, d = x_train.shape[0], x_train.shape[1:]
         x_train = x_train.reshape(n, -1)
         x_test = x_test.reshape(-1, channel, dim, dim)
-        y_test = y_test.reshape(-1, 1)
+        y_test = y_test.reshape(-1)
         # select and set the minority class to 1
         y_train = (y_train == cmin).astype('int')
         y_test = (y_test == cmin).astype('int')
@@ -102,7 +102,7 @@ def get_fed_dataset(args, channel, dim):
             res_x, res_y = x_train, y_train = resampling(
                 cx, cy, sampling=args.os, len_lim=True, random=True)
             res_fed_x.append(res_x.reshape(-1, channel, dim, dim))
-            res_fed_y.append(res_y.reshape(-1, 1))
+            res_fed_y.append(res_y.reshape(-1))
         # res_fed_x = np.concatenate(res_fed_x, axis=0)
         # res_fed_y = np.concatenate(res_fed_y, axis=0)
         # print(res_fed_x.shape, res_fed_y.shape)
