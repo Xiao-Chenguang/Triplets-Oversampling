@@ -57,13 +57,17 @@ def get_fed_dataset(args, channel, dim):
             fed_ds.append(ImbDataset(grouped_ds, cmin, args.ir))
         # load the test data
         test_ds = []
+        test_targets = []
         for i in range(args.num_clients*group, len(writers)):
             tem_ds = datasets.ImageFolder(os.path.join(
                 root_path, writers[i]),
                 transform=transforms.ToTensor(),
                 loader=gray_img_loader)
             test_ds.append(tem_ds)
+            test_targets.extend(tem_ds.targets)
         test_ds = ConcatDataset(test_ds)
+        test_ds.targets = test_targets  # type: ignore
+        test_ds = ImbDataset(test_ds, cmin, 1)
         return fed_ds, test_ds
     elif args.dataset == 'cifar10':
         x_train, x_test, y_train, y_test = load_vision_data(args.dataset)
