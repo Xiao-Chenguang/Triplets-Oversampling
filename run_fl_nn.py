@@ -36,7 +36,7 @@ def run_nn(dataset, os="nonsampling", ir=1, seed=0, task_name=''):
     # ================== prepare data ==================
     channel = 1 if args.dataset == 'femnist' else 3
     dim = 28 if args.dataset == 'femnist' else 32
-    fed_ds, test_ds = get_fed_dataset()
+    fed_ds, test_ds = get_fed_dataset(args, channel, dim)
     fed_dl = [DataLoader(fed_ds[i], batch_size=args.batch_size, shuffle=True) for i in range(args.num_clients)]
     test_dl = DataLoader(test_ds, batch_size=args.batch_size * 8)
 
