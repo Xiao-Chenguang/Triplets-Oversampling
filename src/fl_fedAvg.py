@@ -98,7 +98,7 @@ class FedAvg(Federation):
         with torch.no_grad():
             for x, y in self.test_loader:
                 batch_size = len(y)
-                x, y = x.to(self.args.device), y.to(self.args.device)
+                x, y = x.to(self.args.device), y.unsqueeze(1).to(self.args.device)
                 logits = self.global_model(x)
                 pred.append(logits.sigmoid())
                 gtrue.append(y)
@@ -154,7 +154,7 @@ def train_client(global_model, dataloader, args):
     for step in range(args.local_epoch):
         for X, y in dataloader:
             optimizer.zero_grad()
-            X, y = X.to(args.device), y.to(args.device)
+            X, y = X.to(args.device), y.unsqueeze(1).to(args.device)
             logits = local_model(X)
             batch_loss = lossfn(logits, y)
             loss += batch_loss * len(y)
