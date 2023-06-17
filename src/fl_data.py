@@ -16,9 +16,10 @@ class ImbDataset(Dataset):
         maj_id = np.where(np.array(dataset.targets) != cmin)[0]
         # set self.id equal the concatenation of min_id and maj_id
         self.id = np.concatenate((min_id, maj_id))
+        self.label = (np.array(dataset.targets)[self.id] == cmin).astype(float).tolist()
 
     def __getitem__(self, index):
-        return self.dataset[self.id[index]]
+        return self.dataset[self.id[index]][0], self.label[index]
 
     def __len__(self):
         return len(self.id)
