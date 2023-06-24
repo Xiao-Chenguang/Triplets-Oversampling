@@ -4,6 +4,7 @@ from torch import nn, optim
 from .fl_tools import compute_updat, weight_sum, add_state
 from copy import deepcopy
 from .fl_metrics import Metrics
+import logging
 
 
 class Federation():
@@ -17,8 +18,10 @@ class Federation():
         self.momentum_buffer = None
         self.args = args
         self.writer = self.__tb_writer__(args)
+        self.logger = logging.getLogger(__name__)
 
     def global_step(self):
+        self.logger.info(f'Global round {self.global_round} start!')
         # 1. sample clients to be trained
         selected_clients = torch.randperm(self.args.num_clients)[:self.args.clients_per_round]
 
@@ -39,10 +42,11 @@ class Federation():
         # perform num_epoch rounds of global training (global_step)
         # print the args
         # print(f'Start training Fed learners with follow settings:\n{self.args}')
-        print(f'Start training Fed learners with follow settings:')
-        for k in sorted(vars(self.args)):
-            print(f'{k:>17} = {vars(self.args)[k]}')
-        print('=' * 80)
+        self.logger.info('Start training Fed learners with follow settings:\n' + 
+                         '\n'.join([f'{k:>17} = {vars(self.args)[k]}' for k in sorted(vars(self.args))])
+                         + '\n' + '=' * 80 + '\n'
+                         )
+        # print('=' * 80)
         for epoch in range(self.args.global_epochs):
             self.global_step()
             if self.global_round % self.args.eval_frequency == 0:
@@ -75,7 +79,7 @@ class FedAvg(Federation):
         updates = []
         loss = 0
         for i, client in enumerate(selected_clients):
-            # print(f'train client: {i:2d}', end=' ')
+            self.logger.info(f'train client: {i:2d}')
             update, client_loss = train_client(self.global_model, self.dataloaders[client], self.args)
             updates.append(update)
             loss += client_loss
@@ -84,11 +88,13 @@ class FedAvg(Federation):
         return updates
 
     def server_agg(self, updates, weights):
+        self.logger.info('Aggregate updates from clients')
         self.global_grad = weight_sum(updates, weights)
 
         self.global_model = add_state(self.global_model, self.global_grad, 1, 1)
 
     def eval(self):
+        self.logger.info('Start evaluation')
         lossfn = nn.BCEWithLogitsLoss()
         self.global_model.eval()
         loss = 0
@@ -97,6 +103,7 @@ class FedAvg(Federation):
         gtrue = []
         with torch.no_grad():
             for x, y in self.test_loader:
+                self.logger.info(f'Start testing one batch of {x.shape[0]} samples')
                 batch_size = len(y)
                 x, y = x.to(self.args.device), y.unsqueeze(1).to(self.args.device)
                 logits = self.global_model(x)
@@ -123,10 +130,14 @@ class FedAvg(Federation):
         # perform num_epoch rounds of global training (global_step)
         # print the args
         # print(f'Start training Fed learners with follow settings:\n{self.args}')
-        print(f'Start training Fed learners with follow settings:')
-        for k in sorted(vars(self.args)):
-            print(f'{k:>17} = {vars(self.args)[k]}')
-        print('=' * 80)
+        # print(f'Start training Fed learners with follow settings:')
+        # for k in sorted(vars(self.args)):
+        #     print(f'{k:>17} = {vars(self.args)[k]}')
+        # print('=' * 80)
+        self.logger.info('Start training Fed learners with follow settings:\n' + 
+                    '\n'.join([f'{k:>17} = {vars(self.args)[k]}' for k in sorted(vars(self.args))])
+                    + '\n' + '=' * 80 + '\n'
+                    )
         for epoch in range(self.args.global_epochs):
             self.global_step()
             if self.global_round % self.args.eval_frequency == 0:
