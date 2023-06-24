@@ -5,7 +5,7 @@ from PIL import Image
 from torch.utils.data import TensorDataset, ConcatDataset, Dataset
 from torchvision import datasets, transforms
 from src.cl_data import load_vision_data, resampling
-
+import logging
 
 class ImbDataset(Dataset):
     def __init__(self, dataset, cmin, ir):
@@ -32,9 +32,12 @@ def gray_img_loader(path: str) -> Image.Image:
 
 
 def get_fed_dataset(args, channel, dim):
+    logger = logging.getLogger(__name__)
+    logger.info('start prepare the Fed datasets')
     cmin = np.random.randint(10)
     if args.dataset == 'femnist':
-        group = 20
+        group = 2 # allow ir of 8
+        logger.info(f'load the femnist dataset with {args.num_clients} clients of group {group}')
         root_path = 'datasets/femnist/write_digits/'
         ignore_writers = {'f0048_00', 'f0052_42', 'f0741_44', 'f0825_23',
                           'f0848_42', 'f1209_31', 'f1432_44', 'f1756_07',
@@ -43,6 +46,7 @@ def get_fed_dataset(args, channel, dim):
         # load the data
         fed_ds = []
         for i in range(args.num_clients):
+            logger.info(f'load the {i}-th client')
             client_ds = []
             client_tagets = []
             for j in range(i*group, (i+1) * group):
@@ -58,7 +62,8 @@ def get_fed_dataset(args, channel, dim):
         # load the test data
         test_ds = []
         test_targets = []
-        for i in range(args.num_clients*group, len(writers)):
+        for i in range(args.num_clients*group, 2*args.num_clients*group):
+            logger.info(f'combine the {i}-th writer for testset')
             tem_ds = datasets.ImageFolder(os.path.join(
                 root_path, writers[i]),
                 transform=transforms.ToTensor(),
