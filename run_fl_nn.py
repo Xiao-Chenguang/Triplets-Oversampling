@@ -6,9 +6,11 @@ from src.fl_alexNet import AlexNet
 from src.fl_config import get_parser
 from src.fl_data import get_fed_dataset
 from torch.utils.data import DataLoader
+import logging
 
 
 def run_nn(dataset, os="nonsampling", ir=1, seed=0, task_name=''):
+    logger.info('start prepare the job')
     args = get_parser()
 
     # ========== define the parameters ==========
@@ -53,6 +55,9 @@ dss =  ['mnist', 'cifar10']
 oss =  ['nonsampling', 'oversampling', 'smote', 'blsmote', 'adasyn', 'triplets_m']
 irs= [1, 2, 4, 8]
 seeds = range(30)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.info('start job schedular')
 
 for job in product(dss, oss, irs, seeds):
     run_nn(dataset=job[0], os=job[1], ir=job[2], seed=job[3], task_name='fl')
