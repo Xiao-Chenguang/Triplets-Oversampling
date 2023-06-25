@@ -44,7 +44,8 @@ def get_fed_dataset(args, channel, dim):
                           'f1767_34', 'f1965_23', 'f2027_41', 'f2199_64'}
         writers = sorted(set(os.listdir(root_path)) - ignore_writers)
         # load the data
-        fed_ds = []
+        fed_x = []
+        fed_y = []
         for i in range(args.num_clients):
             logger.info(f'load the {i}-th client')
             client_ds = []
@@ -58,7 +59,21 @@ def get_fed_dataset(args, channel, dim):
                 client_tagets.extend(tem_ds.targets)
             grouped_ds = ConcatDataset(client_ds)
             grouped_ds.targets = client_tagets  # type: ignore
-            fed_ds.append(ImbDataset(grouped_ds, cmin, args.ir))
+            grouped_ds = ImbDataset(grouped_ds, cmin, args.ir)
+            fed_x.append(np.stack([grouped_ds[i][0].numpy().flatten() for i in range(len(grouped_ds))]))
+            fed_y.append(np.array([grouped_ds[i][1] for i in range(len(grouped_ds))]))
+        res_fed_x = []
+        res_fed_y = []
+        for cx, cy in zip(fed_x, fed_y):
+            res_x, res_y = resampling(cx, cy, sampling=args.os, len_lim=True, random=True)
+            res_fed_x.append(res_x.reshape(-1, channel, dim, dim))
+            res_fed_y.append(res_y.reshape(-1))
+        # res_fed_x = np.concatenate(res_fed_x, axis=0)
+        # res_fed_y = np.concatenate(res_fed_y, axis=0)
+        # print(res_fed_x.shape, res_fed_y.shape)
+        # convert to data loader
+        fed_ds = [TensorDataset(torch.Tensor(res_fed_x[i]), torch.Tensor(
+            res_fed_y[i])) for i in range(args.num_clients)]
         # load the test data
         test_ds = []
         test_targets = []
