@@ -109,8 +109,7 @@ def get_fed_dataset(args, channel, dim):
         res_fed_x = []
         res_fed_y = []
         for cx, cy in zip(fed_x, fed_y):
-            res_x, res_y = x_train, y_train = resampling(
-                cx, cy, sampling=args.os, len_lim=True, random=True)
+            res_x, res_y = resampling(cx, cy, sampling=args.os, len_lim=True, random=True)
             res_fed_x.append(res_x.reshape(-1, channel, dim, dim))
             res_fed_y.append(res_y.reshape(-1))
         # res_fed_x = np.concatenate(res_fed_x, axis=0)
