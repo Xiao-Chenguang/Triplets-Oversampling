@@ -16,8 +16,8 @@ def run_nn(args, task_name=''):
         logging.root.removeHandler(handler)
     # set up new log configuration
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(message)s',
+        level=args.log_level,
+        format='%(asctime)s %(levelname)s %(name)s %(message)s',
         handlers=[
             logging.FileHandler('log/' + log_name + ".log"),
             logging.StreamHandler()
