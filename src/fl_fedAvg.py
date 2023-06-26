@@ -86,7 +86,7 @@ class FedAvg(Federation):
             updates.append(update)
             loss += client_loss
         loss /= len(selected_clients)
-        print(f'Epoche [{self.global_round+1:4d}/{self.args.global_epochs}] >> train loss: {loss:.5f}', end=', ')
+        print(f'Epoche [{self.global_round+1:4d}/{self.args.global_epochs}] >> train loss: {loss:.5f}')
         return updates
 
     def server_agg(self, updates, weights):
