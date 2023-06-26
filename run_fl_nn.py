@@ -70,4 +70,4 @@ args = get_parser()
 
 for job in product(dss, oss, irs, seeds):
     args.dataset, args.os, args.ir, args.seed = job
-    run_nn(dataset=job[0], os=job[1], ir=job[2], seed=job[3], task_name='fl')
+    run_nn(args, task_name='fl')
