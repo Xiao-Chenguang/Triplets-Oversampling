@@ -30,6 +30,15 @@ def get_parser():
     parser.add_argument('--log_level', type=str, default='INFO', help='logging level')
 
     args = parser.parse_args()
+    log_level = {
+        'CRITICAL': 50,
+        'ERROR': 40,
+        'WARNING': 30,
+        'INFO': 20,
+        'DEBUG': 10,
+        'NOTSET': 0,
+    }
+    args.log_level = log_level[args.log_level]
 
     return args
     # used default value and avoid conflict in ipython
