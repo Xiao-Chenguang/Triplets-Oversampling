@@ -36,7 +36,7 @@ class Federation():
         weights = weights / weights.sum()
         self.server_agg(client_updates, weights)
         self.global_round += 1
-        self.logger.info(f'Global round {self.global_round} finished in {time.time()-start:.2f}s')
+        self.logger.info(f'Global round {self.global_round} finished. ({time.time()-start:.2f})s')
 
 
     def train(self):
@@ -105,7 +105,7 @@ class FedAvg(Federation):
         gtrue = []
         start = time.time()
         with torch.no_grad():
-            self.logger.debug(f'Prepare no_grad for test in {time.time()-start:.2f}s')
+            self.logger.debug(f'Prepare no_grad for test. ({time.time()-start:.2f})s')
             for x, y in self.test_loader:
                 batch_start = time.time()
                 batch_size = len(y)
@@ -115,8 +115,8 @@ class FedAvg(Federation):
                 gtrue.append(y)
                 batch_loss = lossfn(logits, y) * batch_size
                 loss += batch_loss
-                self.logger.debug(f'Test a batch of {y.shape[0]} in: {time.time()-batch_start:.2f}s')
-        self.logger.info(f'Finish test in {time.time()-start:.2f}s on {test_size} samples')
+                self.logger.debug(f'Test a batch of {y.shape[0]} samples. ({time.time()-batch_start:.2f})s')
+        self.logger.info(f'Finish test on {test_size} samples. ({time.time()-start:.2f})s')
         loss /= test_size
         pred = torch.concat(pred)
         gtrue = torch.concat(gtrue)

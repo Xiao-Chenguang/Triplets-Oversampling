@@ -64,7 +64,7 @@ def get_fed_dataset(args, channel, dim):
             grouped_ds = ImbDataset(grouped_ds, cmin, args.ir)
             fed_x.append(np.stack([grouped_ds[i][0].numpy().flatten() for i in range(len(grouped_ds))]))
             fed_y.append(np.array([grouped_ds[i][1] for i in range(len(grouped_ds))]))
-        logger.info(f'load {args.num_clients} clients dataset in: {time.time() - start:.2f}s')
+        logger.info(f'load {args.num_clients} clients dataset. ({time.time() - start:.2f})s')
         res_fed_x = []
         res_fed_y = []
         for cx, cy in zip(fed_x, fed_y):
@@ -89,7 +89,7 @@ def get_fed_dataset(args, channel, dim):
                 loader=gray_img_loader)
             test_ds.append(tem_ds)
             test_targets.extend(tem_ds.targets)
-        logger.info(f'load the testset of {args.num_clients*group} writers in: {time.time() - start:.2f}s')
+        logger.info(f'load the testset of {args.num_clients*group} writers. ({time.time() - start:.2f})s')
         test_ds = ConcatDataset(test_ds)
         test_ds.targets = test_targets  # type: ignore
         test_ds = ImbDataset(test_ds, cmin, 1)
