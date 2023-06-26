@@ -9,17 +9,12 @@ from torch.utils.data import DataLoader
 import logging
 
 
-def run_nn(dataset, os="nonsampling", ir=1, seed=0, task_name=''):
+def run_nn(args, task_name=''):
+
     logger.info('start prepare the job')
-    args = get_parser()
 
     # ========== define the parameters ==========
     args.task_name = task_name
-    args.dataset = dataset
-    # nonmsapling oversampling smote blsmote adasyn triplet
-    args.os = os
-    args.seed = seed
-    args.ir = ir
 
     # the rest parameters keeps same as the default value
     args.global_epochs = 1000
@@ -59,6 +54,8 @@ seeds = range(30)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.info('start job schedular')
+args = get_parser()
 
 for job in product(dss, oss, irs, seeds):
+    args.dataset, args.os, args.ir, args.seed = job
     run_nn(dataset=job[0], os=job[1], ir=job[2], seed=job[3], task_name='fl')
