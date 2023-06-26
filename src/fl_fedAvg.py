@@ -140,7 +140,7 @@ class FedAvg(Federation):
         # for k in sorted(vars(self.args)):
         #     print(f'{k:>17} = {vars(self.args)[k]}')
         # print('=' * 80)
-        self.logger.debug('Start training Fed learners with follow settings:\n' + 
+        self.logger.info('Start training Fed learners with follow settings:\n' + 
                     '\n'.join([f'{k:>17} = {vars(self.args)[k]}' for k in sorted(vars(self.args))])
                     + '\n' + '=' * 80 + '\n'
                     )
