@@ -29,6 +29,8 @@ def get_parser():
     # 6. logging parameters
     parser.add_argument('--log_level', type=str, default='INFO', help='logging level')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    return args
     # used default value and avoid conflict in ipython
     # return parser.parse_args(args=[])
