@@ -11,11 +11,9 @@ import logging
 
 def run_nn(args, task_name=''):
     log_name = '_'.join([task_name, args.dataset, args.os, str(args.ir), str(args.seed)])
-    # clear the log configuration
-    # clear the log configuration
-    for handler in logging.getLogger().handlers:
-        logging.getLogger().removeHandler(handler)
-
+    # clear log configuration
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
     # set up new log configuration
     logging.basicConfig(
         level=logging.INFO,
