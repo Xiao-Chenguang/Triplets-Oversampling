@@ -105,6 +105,7 @@ class FedAvg(Federation):
         gtrue = []
         start = time.time()
         with torch.no_grad():
+            self.logger.debug(f'Prepare no_grad for test in {time.time()-start:.2f}s')
             for x, y in self.test_loader:
                 batch_start = time.time()
                 batch_size = len(y)
