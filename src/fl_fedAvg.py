@@ -1,4 +1,5 @@
 import os
+import time
 import torch
 from torch import nn, optim
 from .fl_tools import compute_updat, weight_sum, add_state
@@ -21,6 +22,7 @@ class Federation():
         self.logger = logging.getLogger(__name__)
 
     def global_step(self):
+        start = time.time()
         self.logger.info(f'Global round {self.global_round} start!')
         # 1. sample clients to be trained
         selected_clients = torch.randperm(self.args.num_clients)[:self.args.clients_per_round]
@@ -35,6 +37,7 @@ class Federation():
         weights = weights / weights.sum()
         self.server_agg(client_updates, weights)
         self.global_round += 1
+        self.logger.debug(f'Global round {self.global_round} finished in {time.time()-start:.2f}s')
 
 
     def train(self):
@@ -79,8 +82,8 @@ class FedAvg(Federation):
         updates = []
         loss = 0
         for i, client in enumerate(selected_clients):
-            self.logger.info(f'train client: {i:2d}')
-            update, client_loss = train_client(self.global_model, self.dataloaders[client], self.args)
+            self.logger.debug(f'train client: {i:2d}')
+            update, client_loss = train_client(self.global_model, self.dataloaders[client], self.args, self.logger)
             updates.append(update)
             loss += client_loss
         loss /= len(selected_clients)
@@ -94,16 +97,16 @@ class FedAvg(Federation):
         self.global_model = add_state(self.global_model, self.global_grad, 1, 1)
 
     def eval(self):
-        self.logger.info('Start evaluation')
+        self.logger.debug('Start evaluation')
         lossfn = nn.BCEWithLogitsLoss()
         self.global_model.eval()
         loss = 0
         test_size = len(self.test_loader.dataset)
         pred = []
         gtrue = []
+        start = time.time()
         with torch.no_grad():
             for x, y in self.test_loader:
-                self.logger.info(f'Start testing one batch of {x.shape[0]} samples')
                 batch_size = len(y)
                 x, y = x.to(self.args.device), y.unsqueeze(1).to(self.args.device)
                 logits = self.global_model(x)
@@ -111,6 +114,7 @@ class FedAvg(Federation):
                 gtrue.append(y)
                 batch_loss = lossfn(logits, y) * batch_size
                 loss += batch_loss
+        self.logger.debug(f'Finish test in {time.time()-start:.2f}s on {self.test_loader.__len__()} batches')
         loss /= test_size
         pred = torch.concat(pred)
         gtrue = torch.concat(gtrue)
@@ -134,7 +138,7 @@ class FedAvg(Federation):
         # for k in sorted(vars(self.args)):
         #     print(f'{k:>17} = {vars(self.args)[k]}')
         # print('=' * 80)
-        self.logger.info('Start training Fed learners with follow settings:\n' + 
+        self.logger.debug('Start training Fed learners with follow settings:\n' + 
                     '\n'.join([f'{k:>17} = {vars(self.args)[k]}' for k in sorted(vars(self.args))])
                     + '\n' + '=' * 80 + '\n'
                     )
@@ -152,7 +156,7 @@ class FedAvg(Federation):
         return path, head
 
 
-def train_client(global_model, dataloader, args):
+def train_client(global_model, dataloader, args, logger):
     local_model = deepcopy(global_model)
     local_model.to(args.device)
     
@@ -163,7 +167,10 @@ def train_client(global_model, dataloader, args):
 
     loss = 0
     for step in range(args.local_epoch):
+        size, pos = 0, 0
         for X, y in dataloader:
+            size += len(y)
+            pos += y.sum()
             optimizer.zero_grad()
             X, y = X.to(args.device), y.unsqueeze(1).to(args.device)
             logits = local_model(X)
@@ -173,6 +180,7 @@ def train_client(global_model, dataloader, args):
             optimizer.step()
     loss /= data_size * args.local_epoch
     # print(f'training loss: {loss:6.4f}')
+    logger.debug(f'pos: {pos}, size: {size}')
     
     update = compute_updat(local_model, global_model)
     return update, loss
