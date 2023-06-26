@@ -10,7 +10,22 @@ import logging
 
 
 def run_nn(args, task_name=''):
+    log_name = '_'.join([task_name, args.dataset, args.os, str(args.ir), str(args.seed)])
+    # clear the log configuration
+    # clear the log configuration
+    for handler in logging.getLogger().handlers:
+        logging.getLogger().removeHandler(handler)
 
+    # set up new log configuration
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s %(message)s',
+        handlers=[
+            logging.FileHandler('log/' + log_name + ".log"),
+            logging.StreamHandler()
+        ]
+    )
+    logger = logging.getLogger(__name__)
     logger.info('start prepare the job')
 
     # ========== define the parameters ==========
@@ -51,9 +66,7 @@ dss =  ['mnist', 'cifar10']
 oss =  ['nonsampling', 'oversampling', 'smote', 'blsmote', 'adasyn', 'triplets_m']
 irs= [1, 2, 4, 8]
 seeds = range(30)
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-logger.info('start job schedular')
+
 args = get_parser()
 
 for job in product(dss, oss, irs, seeds):
