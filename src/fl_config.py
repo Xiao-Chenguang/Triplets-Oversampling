@@ -23,6 +23,11 @@ def get_parser():
     # 4. class imbalance parameters
     parser.add_argument('--ir', type=int, default=1, help='imbalance ratio (n_majority / n_minority)')
 
+    # 5. multiprocessing parameters
+    parser.add_argument('--jobid', type=int, default=0, help='job id for multiprocessing')
+
+    # 6. logging parameters
+    parser.add_argument('--log_level', type=str, default='INFO', help='logging level')
 
     return parser.parse_args()
     # used default value and avoid conflict in ipython
