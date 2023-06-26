@@ -23,6 +23,7 @@ def run_nn(dataset, os="nonsampling", ir=1, seed=0, task_name=''):
 
     # the rest parameters keeps same as the default value
     args.global_epochs = 1000
+    args.eval_frequency =10
     args.local_epoch = 2
 
     args.num_clients = 100
