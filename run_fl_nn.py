@@ -23,6 +23,7 @@ def run_nn(args, task_name=''):
             logging.StreamHandler()
         ]
     )
+    logging.getLogger('PIL').level = logging.WARNING
     logger = logging.getLogger(__name__)
     logger.info('start prepare the job')
 
