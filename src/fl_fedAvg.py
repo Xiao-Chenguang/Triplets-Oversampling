@@ -23,7 +23,6 @@ class Federation():
 
     def global_step(self):
         start = time.time()
-        self.logger.info(f'Global round {self.global_round} start!')
         # 1. sample clients to be trained
         selected_clients = torch.randperm(self.args.num_clients)[:self.args.clients_per_round]
 
@@ -37,7 +36,7 @@ class Federation():
         weights = weights / weights.sum()
         self.server_agg(client_updates, weights)
         self.global_round += 1
-        self.logger.debug(f'Global round {self.global_round} finished in {time.time()-start:.2f}s')
+        self.logger.info(f'Global round {self.global_round} finished in {time.time()-start:.2f}s')
 
 
     def train(self):
@@ -91,7 +90,7 @@ class FedAvg(Federation):
         return updates
 
     def server_agg(self, updates, weights):
-        self.logger.info('Aggregate updates from clients')
+        self.logger.debug('Aggregate updates from clients')
         self.global_grad = weight_sum(updates, weights)
 
         self.global_model = add_state(self.global_model, self.global_grad, 1, 1)
@@ -107,6 +106,7 @@ class FedAvg(Federation):
         start = time.time()
         with torch.no_grad():
             for x, y in self.test_loader:
+                batch_start = time.time()
                 batch_size = len(y)
                 x, y = x.to(self.args.device), y.unsqueeze(1).to(self.args.device)
                 logits = self.global_model(x)
@@ -114,7 +114,8 @@ class FedAvg(Federation):
                 gtrue.append(y)
                 batch_loss = lossfn(logits, y) * batch_size
                 loss += batch_loss
-        self.logger.debug(f'Finish test in {time.time()-start:.2f}s on {self.test_loader.__len__()} batches')
+                self.logger.debug(f'Test a batch of {y.shape[0]} in: {time.time()-batch_start:.2f}s')
+        self.logger.info(f'Finish test in {time.time()-start:.2f}s on {test_size} samples')
         loss /= test_size
         pred = torch.concat(pred)
         gtrue = torch.concat(gtrue)
