@@ -10,7 +10,8 @@ import logging
 
 
 def run_nn(args, task_name=''):
-    log_name = '_'.join([task_name, args.dataset, args.os, str(args.ir), str(args.seed)])
+    log_name = '_'.join([task_name, args.dataset, args.os,
+                        str(args.ir), str(args.seed)])
     # clear log configuration
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
@@ -32,7 +33,7 @@ def run_nn(args, task_name=''):
 
     # the rest parameters keeps same as the default value
     args.global_epochs = 1000
-    args.eval_frequency =10
+    args.eval_frequency = 10
     args.local_epoch = 2
 
     args.num_clients = 100
@@ -47,23 +48,24 @@ def run_nn(args, task_name=''):
     channel = 1 if args.dataset == 'femnist' else 3
     dim = 28 if args.dataset == 'femnist' else 32
     fed_ds, test_ds = get_fed_dataset(args, channel, dim)
-    fed_dl = [DataLoader(fed_ds[i], batch_size=args.batch_size, shuffle=True) for i in range(args.num_clients)]
-    test_dl = DataLoader(test_ds, batch_size=args.batch_size * 8)
-
+    fed_dl = [DataLoader(fed_ds[i], batch_size=args.batch_size, shuffle=True,
+                         num_workers=args.train_wks) for i in range(args.num_clients)]
+    test_dl = DataLoader(test_ds, batch_size=args.batch_size * 8,
+                         shuffle=False, num_workers=args.test_wks)
 
     # ====================== get the model ======================
 
     model = AlexNet(channel, dim, dim, 1).to(args.device)
-
 
     # ====================== train the model ======================
     fed = FedAvg(fed_dl, test_dl, model, args)
     fed.train()
 
 
-dss =  ['mnist', 'cifar10']
-oss =  ['nonsampling', 'oversampling', 'smote', 'blsmote', 'adasyn', 'triplets_m']
-irs= [1, 2, 4, 8]
+dss = ['mnist', 'cifar10']
+oss = ['nonsampling', 'oversampling', 'smote',
+       'blsmote', 'adasyn', 'triplets_m']
+irs = [1, 2, 4, 8]
 seeds = range(30)
 
 args = get_parser()

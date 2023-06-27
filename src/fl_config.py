@@ -19,6 +19,8 @@ def get_parser():
     parser.add_argument('--dataset', type=str, default='MNIST', help='dataset to be learned')
     parser.add_argument('--batch_size', type=int, default=64, help='local training batch size')
     parser.add_argument('--device', type=str, default='cuda', help='device used')
+    parser.add_argument('--test_wks', type=int, default=8, help='number of workers for testing')
+    parser.add_argument('--train_wks', type=int, default=0, help='number of workers for training')
 
     # 4. class imbalance parameters
     parser.add_argument('--ir', type=int, default=1, help='imbalance ratio (n_majority / n_minority)')
