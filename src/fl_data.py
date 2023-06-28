@@ -10,24 +10,6 @@ import logging
 import multiprocessing as mp
 
 
-class ImbDataset(Dataset):
-    def __init__(self, dataset, cmin, ir):
-        self.dataset = dataset
-        # get the index of dataset with target cmin
-        min_id = np.where(np.array(dataset.targets) == cmin)[0]
-        min_id = np.random.choice(min_id, int(len(min_id) / ir), replace=False)
-        maj_id = np.where(np.array(dataset.targets) != cmin)[0]
-        # set self.id equal the concatenation of min_id and maj_id
-        self.id = np.concatenate((min_id, maj_id))
-        self.label = (np.array(dataset.targets)[self.id] == cmin).astype(float).tolist()
-
-    def __getitem__(self, index):
-        return self.dataset[self.id[index]][0], self.label[index]
-
-    def __len__(self):
-        return len(self.id)
-
-
 def gray_img_loader(path: str) -> Image.Image:
     with open(path, 'rb') as f:
         img = Image.open(f)
