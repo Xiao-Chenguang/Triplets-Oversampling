@@ -32,6 +32,50 @@ def gray_img_loader(path: str) -> Image.Image:
         return img.convert('L')
 
 
+def np_data(folder, cmin):
+    dataset = datasets.ImageFolder(root=folder,
+                                   transform=transforms.ToTensor(),
+                                   loader=gray_img_loader)
+    x = np.stack([dataset[i][0].numpy() for i in range(len(dataset))])
+    y = np.array([dataset[i][1] for i in range(len(dataset))])
+    # convert multi-class to binary-class
+    y = (y == cmin).astype(float)
+    return x, y
+
+
+def group_writers(i, root_path, writers, group, cmin):
+    client_x = []
+    client_y = []
+    for j in range(i*group, (i+1) * group):
+        x, y = np_data(os.path.join(root_path, writers[j]), cmin)
+
+        client_x.append(x)
+        client_y.append(y)
+    # combine the [group] writers into one dataset
+    client_x = np.concatenate(client_x, axis=0)
+    client_y = np.concatenate(client_y, axis=0)
+
+    return client_x, client_y
+
+
+
+
+def load_client(i, root_path, writers, cmin, ir, group, logger):
+    logger.debug(f'load the {i}-th client')
+    client_x, client_y = group_writers(i, root_path, writers, group, cmin)
+
+    # simulate the imbalanced dataset
+    pos_id = np.where(client_y == 1)[0]
+    neg_id = np.where(client_y == 0)[0]
+    np.random.shuffle(pos_id)
+    pos_id = pos_id[:int(len(pos_id) / ir)]
+    sampled_id = np.concatenate((pos_id, neg_id), axis=0)
+
+    client_x = client_x[sampled_id].flatten()
+    client_y = client_y[sampled_id]
+    return client_x, client_y
+
+
 def get_fed_dataset(args, channel, dim):
     np.random.seed(args.seed)
     logger = logging.getLogger(__name__)
