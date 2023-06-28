@@ -33,6 +33,7 @@ def gray_img_loader(path: str) -> Image.Image:
 
 
 def get_fed_dataset(args, channel, dim):
+    np.random.seed(args.seed)
     logger = logging.getLogger(__name__)
     logger.info('start prepare the Fed datasets')
     cmin = np.random.randint(10)
