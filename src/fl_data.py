@@ -7,6 +7,8 @@ from torch.utils.data import TensorDataset, ConcatDataset, Dataset
 from torchvision import datasets, transforms
 from src.cl_data import load_vision_data, resampling
 import logging
+import multiprocessing as mp
+
 
 class ImbDataset(Dataset):
     def __init__(self, dataset, cmin, ir):
@@ -90,25 +92,11 @@ def get_fed_dataset(args, channel, dim):
                           'f1767_34', 'f1965_23', 'f2027_41', 'f2199_64'}
         writers = sorted(set(os.listdir(root_path)) - ignore_writers)
         # load the data
-        fed_x = []
-        fed_y = []
         start = time.time()
-        for i in range(args.num_clients):
-            logger.debug(f'load the {i}-th client')
-            client_ds = []
-            client_tagets = []
-            for j in range(i*group, (i+1) * group):
-                tem_ds = datasets.ImageFolder(os.path.join(
-                    root_path, writers[j]),
-                    transform=transforms.ToTensor(),
-                    loader=gray_img_loader)
-                client_ds.append(tem_ds)
-                client_tagets.extend(tem_ds.targets)
-            grouped_ds = ConcatDataset(client_ds)
-            grouped_ds.targets = client_tagets  # type: ignore
-            grouped_ds = ImbDataset(grouped_ds, cmin, args.ir)
-            fed_x.append(np.stack([grouped_ds[i][0].numpy().flatten() for i in range(len(grouped_ds))]))
-            fed_y.append(np.array([grouped_ds[i][1] for i in range(len(grouped_ds))]))
+        # for i in range(args.num_clients):
+        with mp.Pool(processes=args.num_clients // 2) as pool:
+            fed_x, fed_y = zip(*pool.starmap(load_client, [(
+                i, root_path, writers, cmin, args.ir, group, logger) for i in range(args.num_clients)]))
         logger.info(f'load {args.num_clients} clients dataset. ({time.time() - start:.2f})s')
         res_fed_x = []
         res_fed_y = []
