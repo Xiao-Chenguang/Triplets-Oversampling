@@ -28,6 +28,7 @@ def run_nn(args, task_name=''):
     logger = logging.getLogger(__name__)
     logger.info('start prepare the job')
 
+    torch.manual_seed(args.seed)
     # ========== define the parameters ==========
     args.task_name = task_name
 
