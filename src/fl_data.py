@@ -111,19 +111,12 @@ def get_fed_dataset(args, channel, dim):
         fed_ds = [TensorDataset(torch.Tensor(res_fed_x[i]), torch.Tensor(
             res_fed_y[i])) for i in range(args.num_clients)]
         # load the test data
-        test_x = []
-        test_y = []
         start = time.time()
-        for i in range(args.num_clients*group, 2*args.num_clients*group):
-            logger.debug(f'combine the {i}-th writer for testset')
-            tem_ds = datasets.ImageFolder(os.path.join(
-                root_path, writers[i]),
-                transform=transforms.ToTensor(),
-                loader=gray_img_loader)
-            test_x.extend([tem_ds[i][0].numpy() for i in range(len(tem_ds))])
-            test_y.extend([int(tem_ds[i][1] == cmin) for i in range(len(tem_ds))])
-        test_x = np.stack(test_x)
-        test_y = np.array(test_y)
+        with mp.Pool(processes=args.num_clients // 4) as pool:
+            test_x, test_y = zip(*pool.starmap(np_data, [(
+                os.path.join(root_path, writers[i]), cmin) for i in range(args.num_clients*group, 2*args.num_clients*group)]))
+        test_x = np.concatenate(test_x, axis=0)
+        test_y = np.concatenate(test_y, axis=0)
         test_ds = TensorDataset(torch.Tensor(test_x), torch.Tensor(test_y))
         logger.info(f'load the testset of {args.num_clients*group} writers. ({time.time() - start:.2f})s')
         return fed_ds, test_ds
