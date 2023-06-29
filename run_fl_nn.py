@@ -11,10 +11,12 @@ import logging
 
 def run_nn(args, task_name=''):
     log_name = '_'.join([task_name, args.dataset, args.os,
-                        str(args.ir), str(args.seed)])
+                         str(args.ir), str(args.seed)])
+
     # clear log configuration
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
+
     # set up new log configuration
     logging.basicConfig(
         level=args.log_level,
@@ -24,12 +26,15 @@ def run_nn(args, task_name=''):
             logging.StreamHandler()
         ]
     )
+
+    # mute the PIL logging
     logging.getLogger('PIL').level = logging.WARNING
     logger = logging.getLogger(__name__)
     logger.info('start prepare the job')
 
     torch.manual_seed(args.seed)
-    # ========== define the parameters ==========
+
+    # =================== define the parameters ===================
     args.task_name = task_name
 
     # the rest parameters keeps same as the default value
@@ -45,17 +50,17 @@ def run_nn(args, task_name=''):
 
     args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # ================== prepare data ==================
+    # ======================= prepare data ========================
     channel = 1 if args.dataset == 'femnist' else 3
     dim = 28 if args.dataset == 'femnist' else 32
     fed_ds, test_ds = get_fed_dataset(args, channel, dim)
-    fed_dl = [DataLoader(fed_ds[i], batch_size=args.batch_size, shuffle=True,
-                         num_workers=args.train_wks) for i in range(args.num_clients)]
+    fed_dl = [DataLoader(fed_ds[i], batch_size=args.batch_size,
+                         shuffle=True, num_workers=args.train_wks)
+              for i in range(args.num_clients)]
     test_dl = DataLoader(test_ds, batch_size=args.batch_size * 8,
                          shuffle=False, num_workers=args.test_wks)
 
-    # ====================== get the model ======================
-
+    # ======================= get the model =======================
     model = AlexNet(channel, dim, dim, 1).to(args.device)
 
     # ====================== train the model ======================
