@@ -27,6 +27,7 @@ def get_parser():
 
     # 5. multiprocessing parameters
     parser.add_argument('--jobid', type=int, default=0, help='job id for multiprocessing')
+    parser.add_argument('--procs', type=int, default=0, help='number of processes to prepare data')
 
     # 6. logging parameters
     parser.add_argument('--log_level', type=str, default='INFO', help='logging level')
