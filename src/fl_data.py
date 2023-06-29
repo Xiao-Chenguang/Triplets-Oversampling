@@ -69,7 +69,7 @@ def get_fed_dataset(args, channel, dim):
     logger.info('start prepare the Fed datasets')
     cmin = np.random.randint(10)
     if args.dataset == 'femnist':
-        group = 2 # allow ir of 8
+        group = args.group_size # allow ir of 8
         logger.info(f'load the femnist dataset with {args.num_clients} clients of group {group}')
         root_path = 'datasets/femnist/write_digits/'
         ignore_writers = {'f0048_00', 'f0052_42', 'f0741_44', 'f0825_23',

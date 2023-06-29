@@ -32,6 +32,9 @@ def get_parser():
     # 6. logging parameters
     parser.add_argument('--log_level', type=str, default='INFO', help='logging level')
 
+    # 7. FL simulation parameters
+    parser.add_argument('--group_size', type=int, default=2, help='number of writers in a client')
+
     args = parser.parse_args()
     log_level = {
         'CRITICAL': 50,
