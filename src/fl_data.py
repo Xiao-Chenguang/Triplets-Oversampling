@@ -78,17 +78,28 @@ def get_fed_dataset(args, channel, dim):
         writers = sorted(set(os.listdir(root_path)) - ignore_writers)
         # load the data
         start = time.time()
-        # for i in range(args.num_clients):
-        with mp.Pool(processes=args.num_clients // 2) as pool:
-            fed_x, fed_y = zip(*pool.starmap(load_client, [(
-                i, root_path, writers, cmin, args.ir, group, logger) for i in range(args.num_clients)]))
+        if args.procs > 0:
+            with mp.Pool(args.procs) as pool:
+                res_fed_x, res_fed_y = zip(*pool.starmap(
+                    load_client,
+                    [(i, root_path, writers, cmin, args.ir, group, logger, args.os, channel, dim)
+                        for i in range(args.num_clients)
+                    ]
+                ))
+        else:
+            res_fed_x, res_fed_y = [], []
+            for i in range(args.num_clients):
+                res_x, res_y = load_client(i, root_path, writers, cmin, args.ir, group, logger, args.os, channel, dim)
+                res_fed_x.append(res_x)
+                res_fed_y.append(res_y)
         logger.info(f'load {args.num_clients} clients dataset. ({time.time() - start:.2f})s')
-        res_fed_x = []
-        res_fed_y = []
-        for cx, cy in zip(fed_x, fed_y):
-            res_x, res_y = resampling(cx, cy, sampling=args.os, len_lim=True, random=True)
-            res_fed_x.append(res_x.reshape(-1, channel, dim, dim))
-            res_fed_y.append(res_y.reshape(-1))
+        # res_fed_x = []
+        # res_fed_y = []
+        # for cx, cy in zip(fed_x, fed_y):
+        #     logger.info(f'{cx.shape}, {cy.shape}')
+        #     res_x, res_y = resampling(cx, cy, sampling=args.os, len_lim=True, random=True)
+        #     res_fed_x.append(res_x.reshape(-1, channel, dim, dim))
+        #     res_fed_y.append(res_y.reshape(-1))
         # res_fed_x = np.concatenate(res_fed_x, axis=0)
         # res_fed_y = np.concatenate(res_fed_y, axis=0)
         # print(res_fed_x.shape, res_fed_y.shape)
@@ -97,9 +108,16 @@ def get_fed_dataset(args, channel, dim):
             res_fed_y[i])) for i in range(args.num_clients)]
         # load the test data
         start = time.time()
-        with mp.Pool(processes=args.num_clients // 4) as pool:
-            test_x, test_y = zip(*pool.starmap(np_data, [(
-                os.path.join(root_path, writers[i]), cmin) for i in range(args.num_clients*group, 2*args.num_clients*group)]))
+        if args.procs > 0:
+            with mp.Pool(args.procs) as pool:
+                test_x, test_y = zip(*pool.starmap(np_data, [(
+                    os.path.join(root_path, writers[i]), cmin) for i in range(args.num_clients*group, 2*args.num_clients*group)]))
+        else:
+            test_x, test_y = [], []
+            for i in range(args.num_clients*group, 2*args.num_clients*group):
+                x, y = np_data(os.path.join(root_path, writers[i]), cmin)
+                test_x.append(x)
+                test_y.append(y)
         test_x = np.concatenate(test_x, axis=0)
         test_y = np.concatenate(test_y, axis=0)
         test_ds = TensorDataset(torch.Tensor(test_x), torch.Tensor(test_y))
