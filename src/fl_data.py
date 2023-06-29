@@ -44,7 +44,7 @@ def group_writers(i, root_path, writers, group, cmin):
 
 
 
-def load_client(i, root_path, writers, cmin, ir, group, logger):
+def load_client(i, root_path, writers, cmin, ir, group, logger, os, channel, dim):
     logger.debug(f'load the {i}-th client')
     client_x, client_y = group_writers(i, root_path, writers, group, cmin)
 
@@ -55,9 +55,12 @@ def load_client(i, root_path, writers, cmin, ir, group, logger):
     pos_id = pos_id[:int(len(pos_id) / ir)]
     sampled_id = np.concatenate((pos_id, neg_id), axis=0)
 
-    client_x = client_x[sampled_id].flatten()
+    client_x = client_x[sampled_id]
     client_y = client_y[sampled_id]
-    return client_x, client_y
+    client_x = client_x.reshape(client_x.shape[0], -1)
+
+    client_x, client_y = resampling(client_x, client_y, sampling=os, len_lim=True, random=True)
+    return client_x.reshape(-1, channel, dim, dim), client_y.reshape(-1)
 
 
 def get_fed_dataset(args, channel, dim):
