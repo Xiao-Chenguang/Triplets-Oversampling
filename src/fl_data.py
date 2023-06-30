@@ -36,11 +36,10 @@ def group_writers(h5file, writers, cmin):
     return client_x, client_y
 
 
-
-
-def load_client(i, root_path, writers, cmin, ir, group, logger, os, channel, dim):
+def load_client(i, h5file, writers, cmin, ir, group, logger, os, channel, dim):
     logger.debug(f'load the {i}-th client')
-    client_x, client_y = group_writers(i, root_path, writers, group, cmin)
+    client_writers = writers[i*group: (i+1)*group]
+    client_x, client_y = group_writers(h5file, client_writers, cmin)
 
     # simulate the imbalanced dataset
     pos_id = np.where(client_y == 1)[0]
@@ -53,7 +52,8 @@ def load_client(i, root_path, writers, cmin, ir, group, logger, os, channel, dim
     client_y = client_y[sampled_id]
     client_x = client_x.reshape(client_x.shape[0], -1)
 
-    client_x, client_y = resampling(client_x, client_y, sampling=os, len_lim=True, random=True)
+    client_x, client_y = resampling(
+        client_x, client_y, sampling=os, len_lim=True, random=True)
     return client_x.reshape(-1, channel, dim, dim), client_y.reshape(-1)
 
 
