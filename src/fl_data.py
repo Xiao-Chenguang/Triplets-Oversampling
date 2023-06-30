@@ -98,17 +98,13 @@ def get_fed_dataset(args, channel, dim):
             res_fed_y[i])) for i in range(args.num_clients)]
         # load the test data
         start = time.time()
-        if args.procs > 0:
-            with mp.Pool(args.procs) as pool:
-                test_x, test_y = zip(*pool.starmap(np_data, [(
-                    os.path.join(root_path, writers[i]), cmin) for i in range(args.num_clients*group, min(len(writers), 2*args.num_clients*group))]))
-        else:
-            test_x, test_y = [], []
-            for i in range(args.num_clients*group, 2*args.num_clients*group):
-                x, y = np_data(os.path.join(root_path, writers[i]), cmin)
-                test_x.append(x)
-                test_y.append(y)
-        test_x = np.concatenate(test_x, axis=0)
+        test_x, test_y = [], []
+        for i in range(args.num_clients*group, min(len(writers), 2*args.num_clients*group)):
+            h5group = h5py.Group(h5file[writers[i]].id)
+            x, y = np_data(h5group, cmin)
+            test_x.append(x)
+            test_y.append(y)
+        test_x = np.concatenate(test_x, axis=0).reshape(-1, channel, dim, dim)
         test_y = np.concatenate(test_y, axis=0)
         test_ds = TensorDataset(torch.Tensor(test_x), torch.Tensor(test_y))
         logger.info(f'load the testset of {args.num_clients*group} writers. ({time.time() - start:.2f})s')
