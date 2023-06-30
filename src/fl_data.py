@@ -111,7 +111,7 @@ def get_fed_dataset(args, channel, dim):
         if args.procs > 0:
             with mp.Pool(args.procs) as pool:
                 test_x, test_y = zip(*pool.starmap(np_data, [(
-                    os.path.join(root_path, writers[i]), cmin) for i in range(args.num_clients*group, 2*args.num_clients*group)]))
+                    os.path.join(root_path, writers[i]), cmin) for i in range(args.num_clients*group, min(len(writers), 2*args.num_clients*group))]))
         else:
             test_x, test_y = [], []
             for i in range(args.num_clients*group, 2*args.num_clients*group):
