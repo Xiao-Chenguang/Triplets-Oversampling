@@ -63,30 +63,26 @@ def get_fed_dataset(args, channel, dim):
     logger.info('start prepare the Fed datasets')
     cmin = np.random.randint(10)
     if args.dataset == 'femnist':
-        group = args.group_size # allow ir of 8
-        logger.info(f'load the femnist dataset with {args.num_clients} clients of group {group}')
-        root_path = 'datasets/femnist/write_digits/'
+        group = args.group_size  # allow ir of 8
+        logger.info(
+            f'load the femnist dataset with {args.num_clients} clients of group {group}')
+        root_path = 'datasets/femnist/femnist.hdf5'
+        h5file = h5py.File(root_path, 'r')
         ignore_writers = {'f0048_00', 'f0052_42', 'f0741_44', 'f0825_23',
                           'f0848_42', 'f1209_31', 'f1432_44', 'f1756_07',
                           'f1767_34', 'f1965_23', 'f2027_41', 'f2199_64'}
-        writers = sorted(set(os.listdir(root_path)) - ignore_writers)
+        writers = sorted(set(h5file.keys()) - ignore_writers)
         # load the data
         start = time.time()
-        if args.procs > 0:
-            with mp.Pool(args.procs) as pool:
-                res_fed_x, res_fed_y = zip(*pool.starmap(
-                    load_client,
-                    [(i, root_path, writers, cmin, args.ir, group, logger, args.os, channel, dim)
-                        for i in range(args.num_clients)
-                    ]
-                ))
-        else:
-            res_fed_x, res_fed_y = [], []
-            for i in range(args.num_clients):
-                res_x, res_y = load_client(i, root_path, writers, cmin, args.ir, group, logger, args.os, channel, dim)
-                res_fed_x.append(res_x)
-                res_fed_y.append(res_y)
-        logger.info(f'load {args.num_clients} clients dataset. ({time.time() - start:.2f})s')
+        res_fed_x = []
+        res_fed_y = []
+        for i in range(args.num_clients):
+            res_x, res_y = load_client(
+                i, h5file, writers, cmin, args.ir, group, logger, args.os, channel, dim)
+            res_fed_x.append(res_x)
+            res_fed_y.append(res_y)
+        logger.info(
+            f'load {args.num_clients} clients dataset. ({time.time() - start:.2f})s')
         # res_fed_x = []
         # res_fed_y = []
         # for cx, cy in zip(fed_x, fed_y):
