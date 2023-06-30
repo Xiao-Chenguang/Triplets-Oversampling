@@ -21,11 +21,11 @@ def np_data(h5wtr: h5py.Group, cmin: int) -> Tuple[np.ndarray, np.ndarray]:
     return x, y
 
 
-def group_writers(i, root_path, writers, group, cmin):
+def group_writers(h5file, writers, cmin):
     client_x = []
     client_y = []
-    for j in range(i*group, (i+1) * group):
-        x, y = np_data(os.path.join(root_path, writers[j]), cmin)
+    for writer in writers:
+        x, y = np_data(h5file[writer], cmin)
 
         client_x.append(x)
         client_y.append(y)
