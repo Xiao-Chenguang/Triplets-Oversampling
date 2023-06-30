@@ -1,8 +1,9 @@
 import os
 import time
+import h5py
 import torch
 import numpy as np
-from PIL import Image
+from typing import List, Tuple
 from torch.utils.data import TensorDataset, ConcatDataset, Dataset
 from torchvision import datasets, transforms
 from src.cl_data import load_vision_data, resampling
@@ -10,20 +11,13 @@ import logging
 import multiprocessing as mp
 
 
-def gray_img_loader(path: str) -> Image.Image:
-    with open(path, 'rb') as f:
-        img = Image.open(f)
-        return img.convert('L')
-
-
-def np_data(folder, cmin):
-    dataset = datasets.ImageFolder(root=folder,
-                                   transform=transforms.ToTensor(),
-                                   loader=gray_img_loader)
-    x = np.stack([dataset[i][0].numpy() for i in range(len(dataset))])
-    y = np.array([dataset[i][1] for i in range(len(dataset))])
-    # convert multi-class to binary-class
-    y = (y == cmin).astype(float)
+def np_data(h5wtr: h5py.Group, cmin: int) -> Tuple[np.ndarray, np.ndarray]:
+    # scale data from 0-255 to 0-1
+    x = h5py.Dataset(h5wtr['images'].id)[:] / 255.0
+    # convert label from 30-39 to 0-9
+    y = h5py.Dataset(h5wtr['labels'].id)[:] - 30
+    # convert to binary-class
+    y = (y == cmin).astype(int)  # or float ?
     return x, y
 
 
