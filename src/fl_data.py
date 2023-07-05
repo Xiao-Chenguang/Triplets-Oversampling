@@ -11,13 +11,13 @@ import logging
 import multiprocessing as mp
 
 
-def np_data(h5wtr: h5py.Group, cmin: int) -> Tuple[np.ndarray, np.ndarray]:
+def np_data(h5wtr: h5py.Group, cmin: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     # scale data from 0-255 to 0-1
     x = h5py.Dataset(h5wtr['images'].id)[:] / 255.0
     # convert label from 30-39 to 0-9
     y = h5py.Dataset(h5wtr['labels'].id)[:] - 30
     # convert to binary-class
-    y = (y == cmin).astype(int)  # or float ?
+    y = np.isin(y, cmin).astype(int)  # or float ?
     return x, y
 
 
@@ -61,7 +61,8 @@ def get_fed_dataset(args, channel, dim):
     np.random.seed(args.seed)
     logger = logging.getLogger(__name__)
     logger.info('start prepare the Fed datasets')
-    cmin = np.random.randint(10)
+    cmin = np.random.choice(10, 5, replace=False)
+    # cmin = np.random.randint(10)
     if args.dataset == 'femnist':
         group = args.group_size  # allow ir of 8
         logger.info(
@@ -110,6 +111,7 @@ def get_fed_dataset(args, channel, dim):
         logger.info(f'load the testset of {args.num_clients*group} writers. ({time.time() - start:.2f})s')
         return fed_ds, test_ds
     elif args.dataset == 'cifar10':
+        cmin = np.random.randint(10)
         x_train, x_test, y_train, y_test = load_vision_data(args.dataset)
         # convert to numpy
         if type(x_train) == torch.Tensor:
