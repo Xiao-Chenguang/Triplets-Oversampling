@@ -15,7 +15,7 @@ def np_data(h5wtr: h5py.Group, cmin: np.ndarray) -> Tuple[np.ndarray, np.ndarray
     # scale data from 0-255 to 0-1
     x = h5py.Dataset(h5wtr['images'].id)[:] / 255.0
     # convert label from 30-39 to 0-9
-    y = h5py.Dataset(h5wtr['labels'].id)[:] - 30
+    y = h5py.Dataset(h5wtr['labels'].id)[:]
     # convert to binary-class
     y = np.isin(y, cmin).astype(int)  # or float ?
     return x, y
