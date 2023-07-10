@@ -67,7 +67,7 @@ def get_fed_dataset(args, channel, dim):
         group = args.group_size  # allow ir of 8
         logger.info(
             f'load the femnist dataset with {args.num_clients} clients of group {group}')
-        root_path = 'datasets/femnist/femnist.hdf5'
+        root_path = 'datasets/femnist/write_digits.hdf5'
         h5file = h5py.File(root_path, 'r')
         ignore_writers = {'f0048_00', 'f0052_42', 'f0741_44', 'f0825_23',
                           'f0848_42', 'f1209_31', 'f1432_44', 'f1756_07',
