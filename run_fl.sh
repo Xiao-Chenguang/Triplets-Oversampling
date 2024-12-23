@@ -7,6 +7,12 @@ cd $(dirname $0)
 # create log directory if not exists
 mkdir -p log
 
+# unzip the femnist dataset if not exists
+if [ ! -f ./datasets/femnist/write_digits.hdf5 ]; then
+    echo "Unzipping the femnist dataset"
+    gunzip ./write_digits.hdf5.gz -c > ./datasets/femnist/write_digits.hdf5
+fi
+
 # activate the environment
 source .venv/bin/activate
 
