@@ -5,7 +5,7 @@ echo "Changing to the directory of this script"
 cd $(dirname $0)
 
 # activate the environment
-conda activate trip
+source .venv/bin/activate
 
 # run the cnetralized learning
 echo "Running the federated learning"

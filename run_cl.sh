@@ -5,7 +5,7 @@ echo "Changing to the directory of this script"
 cd $(dirname $0)
 
 # activate the environment
-conda activate trip
+source .venv/bin/activate
 
 # download the data
 echo "Downloading the data"
