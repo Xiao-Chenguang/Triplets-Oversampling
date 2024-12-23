@@ -27,8 +27,8 @@ source ./run_fl.sh
 
 
 ## Python environment and dependencies:
-- [Conda](https://docs.conda.io/en/latest/miniconda.html) installed
-- Python 3.9
+- [uv](https://docs.astral.sh/uv/) installed
+- Python 3.10
 - Required package is listed in the file "[requirements.txt](./requirements.txt)"
 
 ## Synthesis quality comparison

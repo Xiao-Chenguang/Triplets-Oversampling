@@ -2,6 +2,7 @@ import numpy as np
 from numpy.linalg import norm
 from sklearn.neighbors import NearestNeighbors
 
+
 class Triplets(object):
     def __init__(self, n_neighbors=5, random=True, len_lim=True, **kwargs):
         self.n_neighbors = n_neighbors
@@ -15,7 +16,8 @@ class Triplets(object):
         gen_x = []
         gen_y = []
         for c, size in enumerate(strategy):
-            if size == 0: continue
+            if size == 0:
+                continue
             weight = self._weights(x, y, c)
             gen_x_c, gen_y_c = self._sample_one(x, y, c, size, weight)
             gen_x += gen_x_c
@@ -23,18 +25,19 @@ class Triplets(object):
         gen_x = np.vstack(gen_x)
         gen_y = np.array(gen_y)
         return np.concatenate((x, gen_x), axis=0), np.concatenate((y, gen_y), axis=0)
-    
+
     def _sample_strategy(self, y):
         _, self.counts = np.unique(y, return_counts=True)
         return max(self.counts) - self.counts
-    
+
     def _weights(self, x, y, c):
         return np.ones(self.counts[c])
-    
+
     def _sample_one(self, x, y, c, size, weight):
         gen_x = []
         gen_y = []
-        if size == 0: return gen_x, gen_y
+        if size == 0:
+            return gen_x, gen_y
 
         # get the indices of minority and majority instances
         min_idxs = np.where(y == c)[0]
@@ -57,7 +60,8 @@ class Triplets(object):
                 continue
 
             offset = tp3 - tp2
-            if self.len_lim: offset = offset * min(1, norm(tp1 - tp2) / norm(offset))
+            if self.len_lim:
+                offset = offset * min(1, norm(tp1 - tp2) / norm(offset))
             coef = np.random.rand() if self.random is True else 1.0
             new_x = tp1 + coef * offset
             gen_x.append(new_x)

@@ -1,14 +1,12 @@
 from torchmetrics.classification import (
+    BinaryAccuracy,
     BinaryAUROC,
+    BinaryAveragePrecision,
     BinaryConfusionMatrix,
     BinaryF1Score,
-    BinaryAccuracy,
-    BinaryRecall,
     BinaryPrecision,
-    BinaryConfusionMatrix,
-    BinaryAveragePrecision
+    BinaryRecall,
 )
-
 
 
 class Metrics:
@@ -29,7 +27,7 @@ class Metrics:
         precision = self.precision(y_hat, y).item()
         f1 = self.f1(y_hat, y).item()
         (tn, fp), (fn, tp) = self.conf_matrix(y_hat, y)
-        gmean = ((tp/(tp+fn) * tn/(tn+fp))**0.5).item()
+        gmean = ((tp / (tp + fn) * tn / (tn + fp)) ** 0.5).item()
         auc = self.auroc(y_hat, y).item()
         ap = self.ap(y_hat, y).item()
         return acc, recall, precision, f1, gmean, auc, ap
