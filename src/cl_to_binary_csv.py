@@ -115,6 +115,7 @@ def process_haberman():
     path_haberman = root + 'raw/haberman.arff'
     data_haberman, meta_haberman = arff.loadarff(path_haberman)
     df_haberman = pd.DataFrame(data_haberman)
+    df_haberman["Patients_year_of_operation"] = df_haberman["Patients_year_of_operation"].str.decode('utf-8').astype(int)
     t = df_haberman['Survival_status'].value_counts()
     # print(t)
 
