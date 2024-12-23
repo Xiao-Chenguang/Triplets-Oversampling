@@ -134,13 +134,13 @@ def get_fed_dataset(args, channel, dim):
         cmin = np.random.randint(10)
         x_train, x_test, y_train, y_test = load_vision_data(args.dataset)
         # convert to numpy
-        if type(x_train) == torch.Tensor:
+        if isinstance(x_train, torch.Tensor):
             x_train, x_test = x_train.numpy(), x_test.numpy()
             y_train, y_test = y_train.numpy(), y_test.numpy()
         else:
             y_train, y_test = np.array(y_train), np.array(y_test)
         # get the original shape
-        n, d = x_train.shape[0], x_train.shape[1:]
+        n, _ = x_train.shape[0], x_train.shape[1:]
         x_train = x_train.reshape(n, -1)
         x_test = x_test.reshape(-1, channel, dim, dim)
         y_test = y_test.reshape(-1)

@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pandas as pd
 from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE, RandomOverSampler
@@ -112,7 +114,8 @@ def resampling(x, y, sampling="nonsampling", **kwargs):
         ros = SAMPLERS[sampling]()
         try:
             x_resampled, y_resampled = ros.fit_resample(x, y)
-        except:
+        except Exception as e:
+            warnings.warn(f"Fall back to original dataset due to: {e}")
             x_resampled, y_resampled = x, y
     elif sampling in CUSTOM_SAMPLERS:
         sampler = CUSTOM_SAMPLERS[sampling](**kwargs)

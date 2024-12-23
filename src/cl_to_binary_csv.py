@@ -109,7 +109,7 @@ def process_staimage():
     path_staimage = root + "raw/satimage.arff"
     data_staimage, meta_staimage = arff.loadarff(path_staimage)
     df_staimage = pd.DataFrame(data_staimage)
-    t = df_staimage["class"].value_counts()
+    # t = df_staimage["class"].value_counts()
 
     # convert to csv with 2 classes: van and not van
     df_staimage.replace(b"4.", 1, inplace=True)
@@ -129,7 +129,7 @@ def process_haberman():
     df_haberman["Patients_year_of_operation"] = (
         df_haberman["Patients_year_of_operation"].str.decode("utf-8").astype(int)
     )
-    t = df_haberman["Survival_status"].value_counts()
+    # t = df_haberman["Survival_status"].value_counts()
     # print(t)
 
     #     # convert to csv with 2 classes: van and not van
@@ -145,7 +145,7 @@ def process_aloi():
     df_pulsar = pd.DataFrame(data_pulsar)
     df_pulsar = df_pulsar[~df_pulsar.duplicated()]
 
-    t = df_pulsar["Target"].value_counts()
+    # t = df_pulsar["Target"].value_counts()
     # print(t)
 
     #     # convert to csv with 2 classes: van and not van
@@ -160,7 +160,7 @@ def process_pulsar():
     data_pulsar, meta_pulsar = arff.loadarff(path_pulsar)
     df_pulsar = pd.DataFrame(data_pulsar)
 
-    t = df_pulsar["0"].value_counts()
+    # t = df_pulsar["0"].value_counts()
     # print(t)
     df_pulsar.to_csv(root + "pulsar.csv", index=False, header=False)
 
