@@ -81,7 +81,7 @@ def run_nn(args, task_name=""):
     fed.train()
 
 
-dss = ["mnist", "cifar10"]
+dss = ["femnist", "cifar10"]
 oss = ["nonsampling", "oversampling", "smote", "blsmote", "adasyn", "triplets_m"]
 irs = [1, 2, 4, 8]
 seeds = range(30)
