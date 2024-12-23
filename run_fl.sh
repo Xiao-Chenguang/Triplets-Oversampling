@@ -4,6 +4,9 @@
 echo "Changing to the directory of this script"
 cd $(dirname $0)
 
+# create log directory if not exists
+mkdir -p log
+
 # activate the environment
 source .venv/bin/activate
 
