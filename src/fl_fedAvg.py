@@ -65,7 +65,6 @@ class Federation:
             self.global_step()
             if self.global_round % self.args.eval_frequency == 0:
                 self.eval()
-        self.writer.close()
 
     def client_fit(self, selected_clients):
         raise NotImplementedError
