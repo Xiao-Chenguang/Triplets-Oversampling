@@ -188,6 +188,6 @@ def get_fed_dataset(args, channel, dim):
         ]
         test_ds = TensorDataset(torch.Tensor(x_test), torch.Tensor(y_test))
     else:
-        raise NotImplementedError("Dataset not implemented yet")
+        raise NotImplementedError(f"Dataset {args.dataset} not implemented yet")
         # raise NotImplementedError(f'Dataset: {args.dataset} not implemented yet')
     return fed_ds, test_ds
