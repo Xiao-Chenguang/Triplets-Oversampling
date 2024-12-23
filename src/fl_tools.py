@@ -1,14 +1,19 @@
-import torch
 from copy import deepcopy
+
+import torch
+
 
 @torch.no_grad()
 def compute_updat(current_model, previous_model):
     # complete the function to return the difference of twe model
     update = deepcopy(current_model)
-    for u, c, p in zip(update.parameters(), current_model.parameters(), previous_model.parameters()):
+    for u, c, p in zip(
+        update.parameters(), current_model.parameters(), previous_model.parameters()
+    ):
         u.mul_(0)
         u.add_(c - p)
     return update
+
 
 def compute_updat_v0(current_model, previous_model):
     # complete the function to return the difference of twe model
@@ -17,6 +22,7 @@ def compute_updat_v0(current_model, previous_model):
     for k in current_state:
         current_state[k] -= previous_state[k]
     return current_model
+
 
 @torch.no_grad()
 def weight_sum(updates, weights):
@@ -28,6 +34,7 @@ def weight_sum(updates, weights):
             v.add_(update.state_dict()[k], alpha=weight)
     return grad
 
+
 @torch.no_grad()
 def add_state(state, updates, a, b):
     if state is None:
@@ -37,4 +44,3 @@ def add_state(state, updates, a, b):
         x.mul_(a)
         x.add_(y.mul(b))
     return state
-    

@@ -1,5 +1,6 @@
 from torch import nn
 
+
 class AlexNet(nn.Module):
     def __init__(self, channel, dim1, dim2, num_classes=1):
         super(AlexNet, self).__init__()
@@ -11,9 +12,9 @@ class AlexNet(nn.Module):
         self.linear_relu_stack = nn.Sequential(
             nn.Linear((dim1 - 8) * (dim2 - 8) * 64, 512),
             nn.ReLU(),
-            nn.Linear(512, num_classes)
+            nn.Linear(512, num_classes),
         )
-    
+
     def forward(self, x):
         x = self.conv1(x)
         x = self.maxp1(x)

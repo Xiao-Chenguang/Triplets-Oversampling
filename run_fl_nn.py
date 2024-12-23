@@ -1,17 +1,20 @@
 # import packages
-import torch
+import logging
 from itertools import product
-from src.fl_fedAvg import FedAvg
+
+import torch
+from torch.utils.data import DataLoader
+
 from src.fl_alexNet import AlexNet
 from src.fl_config import get_parser
 from src.fl_data import get_fed_dataset
-from torch.utils.data import DataLoader
-import logging
+from src.fl_fedAvg import FedAvg
 
 
-def run_nn(args, task_name=''):
-    log_name = '_'.join([task_name, args.dataset, args.os,
-                         str(args.ir), str(args.seed)])
+def run_nn(args, task_name=""):
+    log_name = "_".join(
+        [task_name, args.dataset, args.os, str(args.ir), str(args.seed)]
+    )
 
     # clear log configuration
     for handler in logging.root.handlers[:]:
@@ -20,17 +23,17 @@ def run_nn(args, task_name=''):
     # set up new log configuration
     logging.basicConfig(
         level=args.log_level,
-        format='%(asctime)s %(levelname)s %(name)s %(message)s',
+        format="%(asctime)s %(levelname)s %(name)s %(message)s",
         handlers=[
-            logging.FileHandler('log/' + log_name + ".log"),
-            logging.StreamHandler()
-        ]
+            logging.FileHandler("log/" + log_name + ".log"),
+            logging.StreamHandler(),
+        ],
     )
 
     # mute the PIL logging
-    logging.getLogger('PIL').level = logging.WARNING
+    logging.getLogger("PIL").level = logging.WARNING
     logger = logging.getLogger(__name__)
-    logger.info('start prepare the job')
+    logger.info("start prepare the job")
 
     torch.manual_seed(args.seed)
 
@@ -48,17 +51,27 @@ def run_nn(args, task_name=''):
     args.local_lr = 0.001
     args.local_momentum = 0.9
 
-    args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # ======================= prepare data ========================
-    channel = 1 if args.dataset == 'femnist' else 3
-    dim = 28 if args.dataset == 'femnist' else 32
+    channel = 1 if args.dataset == "femnist" else 3
+    dim = 28 if args.dataset == "femnist" else 32
     fed_ds, test_ds = get_fed_dataset(args, channel, dim)
-    fed_dl = [DataLoader(fed_ds[i], batch_size=args.batch_size,
-                         shuffle=True, num_workers=args.train_wks)
-              for i in range(args.num_clients)]
-    test_dl = DataLoader(test_ds, batch_size=args.batch_size * 8,
-                         shuffle=False, num_workers=args.test_wks)
+    fed_dl = [
+        DataLoader(
+            fed_ds[i],
+            batch_size=args.batch_size,
+            shuffle=True,
+            num_workers=args.train_wks,
+        )
+        for i in range(args.num_clients)
+    ]
+    test_dl = DataLoader(
+        test_ds,
+        batch_size=args.batch_size * 8,
+        shuffle=False,
+        num_workers=args.test_wks,
+    )
 
     # ======================= get the model =======================
     model = AlexNet(channel, dim, dim, 1).to(args.device)
@@ -68,9 +81,8 @@ def run_nn(args, task_name=''):
     fed.train()
 
 
-dss = ['mnist', 'cifar10']
-oss = ['nonsampling', 'oversampling', 'smote',
-       'blsmote', 'adasyn', 'triplets_m']
+dss = ["mnist", "cifar10"]
+oss = ["nonsampling", "oversampling", "smote", "blsmote", "adasyn", "triplets_m"]
 irs = [1, 2, 4, 8]
 seeds = range(30)
 
@@ -78,4 +90,4 @@ args = get_parser()
 
 for job in product(dss, oss, irs, seeds):
     args.dataset, args.os, args.ir, args.seed = job
-    run_nn(args, task_name='fl')
+    run_nn(args, task_name="fl")
